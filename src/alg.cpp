@@ -29,7 +29,9 @@ std::string infx2pstfx(std::string inf) {
             post += inf[i];
             post += " ";
         } else {
-            if (inf[i] == '(' || (getPrior(inf[i]) > getPrior(stck.get())) || stck.isEmpty()) {
+            int k1 = getPrior(inf[i]);
+            int k2 = getPrior(stck.get());
+            if (inf[i] == '(' || (k1 > k2) || stck.isEmpty()) {
                 stck.push(inf[i]);
             } else if (inf[i] == ')') {
                 char s = stck.pop();
@@ -63,7 +65,7 @@ int eval(std::string pref) {
         if (s == ' ')
             continue;
         if ((s <= '9') && (s >= '0')) {
-            int z = (int)(s - '0');
+            int z = static_cast<int>(s - '0');
             temp.push(z);
         } else {
             int zn;
