@@ -3,12 +3,89 @@
 #include <map>
 #include "tstack.h"
 
+int getPrior(char c) {
+    switch (c) {
+    case '+':
+        return 2;
+    case '-':
+        return 2;
+    case '(':
+        return 0;
+    case ')':
+        return 1;
+    case '*':
+        return 3;
+    case '/':
+        return 3;
+    }
+}
+
 std::string infx2pstfx(std::string inf) {
-  // добавьте код
-  return std::string("");
+    std::string post;
+    TStack<char, 100> stck;
+    for (int i = 0; i < inf.size(); i++) {
+        if ((inf[i] <= '9') && (inf[i] >= '0')) {
+            post += inf[i];
+            post += " ";
+        } else {
+            if (inf[i] == '(' || (getPrior(inf[i]) > getPrior(stck.get())) || stck.isEmpty()) {
+                stck.push(inf[i]);
+            } else if (inf[i] == ')') {
+                char s = stck.pop();
+                while (s != '(') {
+                    post += s;
+                    post += " ";
+                    s = stck.pop();
+                }
+            } else if (getPrior(inf[i] <= stck.get())) {
+                while (getPrior(inf[i] <= stck.get()) && !stck.isEmpty()) {
+                    char s = stck.pop();
+                    post += s;
+                    post += " ";
+                }
+                stck.push(inf[i]);
+            }
+        }
+    }
+    while (!stck.isEmpty()) {
+        char s = stck.pop();
+        post += s;
+        post += " ";
+    }
+    post.pop_back();
+    return post;
 }
 
 int eval(std::string pref) {
-  // добавьте код
-  return 0;
+    TStack <int, 100> temp;
+    for (char s : pref) {
+        if (s == ' ')
+            continue;
+        if ((s <= '9') && (s >= '0')) {
+            int z = (int)(s - '0');
+            temp.push(z);
+        } else {
+            int zn;
+            int first = temp.get();
+            temp.pop();
+            int second = temp.get();
+            temp.pop();
+            switch (s) {
+            case '+':
+                zn = second + first;
+                break;
+            case '-':
+                zn = second - first;
+                break;
+            case '*':
+                zn = second * first;
+                break;
+            case '/':
+                zn = second / first;
+                break;
+            }
+            temp.push(zn);
+        }
+    }
+    return temp.pop();
 }
